@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Доставка десертів | Смаколик</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+  <script src="js/firebase-init.js"></script>
+  <script src="js/user-info.js"></script>  
+</head>
+<body>
+  <header>
+    <h1>Смаколик — Доставка солодощів</h1>
+    <nav>
+      <ul>
+        <li><a href="index.html">Головна</a></li>
+        <li><a href="catalog.html">Каталог</a></li>
+        <li><a href="cart.html">Кошик</a></li>
+        <li><a href="order.html">Замовлення</a></li>
+        <li><a href="post.html?id=1">Відгуки</a></li>
+      </ul>
+    </nav>
+
+    <!-- Блок з інформацією про користувача -->
+    <div id="user-info" style="position: absolute; top: 10px; right: 10px;">
+      <!-- Кнопка "Увійти" або "Реєстрація" з'являється, якщо користувач не увійшов -->
+      <a href="login.html" id="login-btn" class="btn-login">Увійти</a>
+      <a href="register.html" id="register-btn" class="btn-register">Реєстрація</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <h2>Солодке прямо до дверей 🍰</h2>
+      <p>Швидка доставка ваших улюблених десертів</p>
+      <a href="catalog.html" class="btn">До каталогу</a>
+    </section>
+  </main>
+
+  <footer>
+    <p>© 2025 Смаколик. Всі права захищено.</p>
+  </footer>
+
+</body>
+</html>

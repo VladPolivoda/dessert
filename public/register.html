@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Реєстрація</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div class="form-container">
+    <h2>Реєстрація</h2>
+    <input type="email" id="email" placeholder="Email">
+    <input type="password" id="password" placeholder="Пароль">
+    <button onclick="register()">Зареєструватися</button>
+    <p>Вже маєте акаунт? <a href="login.html">Увійдіть</a></p>
+    <a href="catalog.html" class="btn go-catalog">Перейти до каталогу</a>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+  <script src="js/firebase-init.js"></script>
+
+  <script>
+    // Функція реєстрації користувача
+    function register() {
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value.trim();
+
+      // Перевірка на порожні поля
+      if (!email || !password) {
+        alert('Будь ласка, заповніть всі поля');
+        return;
+      }
+
+      // Перевірка на валідність email
+      const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+      if (!emailPattern.test(email)) {
+        alert('Будь ласка, введіть коректну електронну адресу');
+        return;
+      }
+
+      // Перевірка на довжину пароля (мінімум 6 символів)
+      if (password.length < 6) {
+        alert('Пароль має бути мінімум 6 символів');
+        return;
+      }
+
+      // Реєстрація через Firebase
+      firebase.auth().createUserWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+          const user = userCredential.user;
+
+          // Надсилає email для підтвердження
+          user.sendEmailVerification()
+            .then(() => {
+              alert('Підтвердження email надіслано. Перевірте пошту.');
+              window.location.href = 'index.html';  // Перехід на головну сторінку
+            });
+        })
+        .catch(err => {
+          // Якщо є помилка при реєстрації
+          alert(`Помилка: ${err.message}`);
+        });
+    }
+  </script>
+</body>
+</html>

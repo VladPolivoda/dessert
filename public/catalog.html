@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Каталог | Смаколик</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+  <script src="js/firebase-init.js"></script>
+  <script src="js/user-info.js"></script>  
+</head>
+<body>
+  <header>
+    <h1>Смаколик — Доставка солодощів</h1>
+    <nav>
+      <ul>
+        <li><a href="index.html">Головна</a></li>
+        <li><a href="catalog.html">Каталог</a></li>
+        <li><a href="cart.html">Кошик</a></li>
+        <li><a href="order.html">Замовлення</a></li>
+        <li><a href="post.html?id=1">Відгуки</a></li>
+      </ul>
+    </nav>
+    <div id="user-info" style="position: absolute; top: 10px; right: 10px;"></div>
+    <div id="user-info"></div>
+  </header>
+
+
+  <main>
+    <section class="catalog">
+      <h2>Наші десерти</h2>
+      <div class="product-list">
+
+        <div class="product">
+          <img src="images/chocolatecake.jpg" alt="Шоколадний торт">
+          <h3>Шоколадний торт</h3>
+          <p>Ціна: 300 грн</p>
+          <button class="btn" onclick="addToCart('Шоколадний торт', 300)">Додати до кошика</button>
+        </div>
+
+        <div class="product">
+          <img src="images/bun.jpg" alt="Шоколадна булочка">
+          <h3>Шоколадна булочка</h3>
+          <p>Ціна: 150 грн</p>
+          <button class="btn" onclick="addToCart('Шоколадна булочка', 150)">Додати до кошика</button>
+        </div>
+
+        <div class="product">
+          <img src="images/cheesecake.jpg" alt="Чізкейк">
+          <h3>Чізкейк</h3>
+          <p>Ціна: 220 грн</p>
+          <button class="btn" onclick="addToCart('Чізкейк', 220)">Додати до кошика</button>
+          <div class="product">
+            <img src="images/strawberry.jpg" alt="Полуничний десерт">
+            <h3>Полуничний десерт</h3>
+            <p>Ціна: 250 грн</p>
+            <button class="btn" onclick="addToCart('Полуничний десерт', 250)">Додати до кошика</button>
+          </div>
+  
+          <div class="product">
+            <img src="images/tiramisu.jpg" alt="Тірамісу">
+            <h3>Тірамісу</h3>
+            <p>Ціна: 250 грн</p>
+            <button class="btn" onclick="addToCart('Тірамісу', 270)">Додати до кошика</button>
+          </div>
+  
+          <div class="product">
+            <img src="images/chocolatemalina.jpg" alt="Десерт з малиною та шоколадом">
+            <h3>Десерт з малиною та шоколадом</h3>
+            <p>Ціна: 200 грн</p>
+            <button class="btn" onclick="addToCart('Десерт з малиною та шоколадом', 290)">Додати до кошика</button>
+          </div>  
+      </section>
+  </main>
+
+  <footer>
+    <p>© 2025 Смаколик. Всі права захищено.</p>
+  </footer>
+  
+  <script>
+    firebase.auth().onAuthStateChanged(user => {
+      const userInfoDiv = document.getElementById('user-info');
+      if (user) {
+        userInfoDiv.innerHTML = `👋 Вітаємо, ${user.email} | <a href="#" onclick="logout()">Вийти</a>`;
+      } else {
+        userInfoDiv.innerHTML = `<a href="login.html">Увійти</a> або <a href="register.html">Зареєструватися</a>`;
+      }
+    });
+  
+    function logout() {
+      firebase.auth().signOut().then(() => {
+        window.location.reload();
+      });
+    }
+  </script>
+  
+  <script src="js/script.js"></script>
+</body>
+</html>

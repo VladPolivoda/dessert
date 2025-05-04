@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Кошик | Смаколик</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+  <script src="js/firebase-init.js"></script>
+  <script src="js/user-info.js"></script>
+</head>
+<body>
+  <header>
+    <h1>Смаколик — Доставка солодощів</h1>
+    <nav>
+      <ul>
+        <li><a href="index.html">Головна</a></li>
+        <li><a href="catalog.html">Каталог</a></li>
+        <li><a href="cart.html">Кошик</a></li>
+        <li><a href="order.html">Замовлення</a></li>
+        <li><a href="post.html?id=1">Відгуки</a></li>
+      </ul>
+    </nav>
+    <div id="user-info" style="position: absolute; top: 10px; right: 10px;"></div>
+  </header>
+
+  <main>
+    <section class="cart">
+      <h2>Ваш кошик</h2>
+      <ul id="cart-items"></ul>
+      <p id="total">Загальна сума: 0 грн</p>
+      
+      <!-- Кнопка для оформлення замовлення -->
+      <a href="order.html" id="order-button" class="btn">Оформити замовлення</a>
+
+      <!-- Повідомлення для незареєстрованих користувачів -->
+      <div id="login-message" style="display:none;">
+        <p>Для оформлення замовлення потрібно бути зареєстрованим користувачем. <a href="login.html">Увійти</a> або <a href="register.html">Зареєструватися</a>.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>© 2025 Смаколик. Всі права захищено.</p>
+  </footer>
+
+  <script>
+    // Перевірка автентифікації
+    firebase.auth().onAuthStateChanged(user => {
+      const orderButton = document.getElementById('order-button');
+      const loginMessage = document.getElementById('login-message');
+      
+      if (user) {
+        // Якщо користувач авторизований, показуємо кнопку для замовлення
+        orderButton.style.display = 'block';
+        loginMessage.style.display = 'none';
+      } else {
+        // Якщо користувач не авторизований, показуємо повідомлення
+        orderButton.style.display = 'none';
+        loginMessage.style.display = 'block';
+      }
+    });
+
+    // Додатково перевірка на натискання кнопки "Оформити замовлення"
+    document.getElementById('order-button').addEventListener('click', function(event) {
+      const user = firebase.auth().currentUser;
+
+      if (!user) {
+        alert('Вам потрібно увійти, щоб оформити замовлення!');
+        window.location.href = 'login.html';  // Перехід на сторінку входу
+        event.preventDefault();  // Забороняє перехід до сторінки замовлення
+      }
+    });
+  </script>
+
+  <script src="js/script.js"></script>
+</body>
+</html>

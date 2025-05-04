@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Перегляд поста</title>
+  <link rel="stylesheet" href="css/styles.css" />
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+  <script src="js/firebase-init.js"></script>
+  <script src="js/user-info.js"></script>
+</head>
+<body>
+  <header>
+    <h1>Перегляд поста</h1>
+    <a href="catalog.html">← До каталогу</a>
+    <!-- Контейнер для відображення email + кнопки Вийти/Увійти -->
+    <div id="user-info" style="position: absolute; top: 10px; right: 10px;"></div>
+  </header>
+
+  <main>
+    <article id="post"></article>
+
+    <section id="comments-section">
+      <h2>Відгуки</h2>
+      <ul id="comments-list"></ul>
+
+      <!-- Форма додавання відгуку -->
+      <div id="add-comment" style="display:none;">
+        <textarea id="new-comment" rows="3" placeholder="Ваш відгук…"></textarea><br/>
+        <button id="submit-comment">Додати відгук</button>
+      </div>
+      <p id="login-prompt" style="display:none;">
+        Щоб додати відгук, будь ласка, <a href="login.html">увійдіть</a>.
+      </p>
+    </section>
+  </main>
+
+  <!-- загальний скрипт (кошик тощо) -->
+  <script src="js/script.js"></script>
+
+  <!-- скрипт для поста + коментарів -->
+  <script>
+    const postId = Number(new URLSearchParams(location.search).get('id') || 1);
+
+    // 1) Завантажуємо сам пост
+    fetch(`/api/posts/${postId}`)
+      .then(r => r.json())
+      .then(({ post }) => {
+        document.getElementById('post').innerHTML = `
+          <h2>${post.title}</h2>
+          <p>${post.content}</p>
+        `;
+      });
+
+    // 2) Підтягуємо всі коментарі
+    function loadComments() {
+      fetch(`/api/comments/${postId}`)
+        .then(r => r.json())
+        .then(comments => {
+          const ul = document.getElementById('comments-list');
+          ul.innerHTML = '';
+          comments.forEach(c => {
+            const li = document.createElement('li');
+            li.innerHTML = `<strong>${c.author}:</strong> ${c.content}`;
+            ul.appendChild(li);
+          });
+        });
+    }
+    loadComments();
+
+    // 3) Показуємо/ховаємо форму залежно від статусу auth
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        document.getElementById('add-comment').style.display = 'block';
+        document.getElementById('login-prompt').style.display = 'none';
+      } else {
+        document.getElementById('add-comment').style.display = 'none';
+        document.getElementById('login-prompt').style.display = 'block';
+      }
+    });
+
+    // 4) Обробник натискання "Додати відгук"
+    document.getElementById('submit-comment').addEventListener('click', () => {
+      const content = document.getElementById('new-comment').value.trim();
+      if (!content) return alert('Введіть текст відгуку');
+      const user = firebase.auth().currentUser;
+      if (!user) return alert('Ви маєте увійти');
+
+      user.getIdToken()
+        .then(token => {
+          return fetch('/api/comments', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer ' + token
+            },
+            body: JSON.stringify({ post_id: postId, content })
+          });
+        })
+        .then(r => {
+          if (!r.ok) throw new Error('Не авторизовано');
+          return r.json();
+        })
+        .then(() => {
+          document.getElementById('new-comment').value = '';
+          loadComments();
+        })
+        .catch(e => alert(e.message));
+    });
+  </script>
+</body>
+</html>
